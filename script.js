@@ -1,21 +1,29 @@
-function addTask() {
+document.addEventListener("DOMContentLoaded", function () {
   const input = document.getElementById("taskInput");
-  const taskText = input.value.trim();
-  if (!taskText) return;
+  const taskList = document.getElementById("taskList");
+  const addBtn = document.getElementById("addBtn");
 
-  const li = document.createElement("li");
-  li.textContent = taskText;
-  li.onclick = () => li.classList.toggle("completed");
+  addBtn.addEventListener("click", function () {
+    const taskText = input.value.trim();
+    if (!taskText) return;
 
-  const delBtn = document.createElement("button");
-  delBtn.textContent = "❌";
-  delBtn.onclick = (e) => {
-    e.stopPropagation();
-    li.remove();
-  };
+    const li = document.createElement("li");
+    li.textContent = taskText;
+    li.classList.add("task");
 
-  li.appendChild(delBtn);
-  document.getElementById("taskList").appendChild(li);
+    li.addEventListener("click", function () {
+      li.classList.toggle("completed");
+    });
 
-  input.value = "";
-}
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "❌";
+    delBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      li.remove();
+    });
+
+    li.appendChild(delBtn);
+    taskList.appendChild(li);
+    input.value = "";
+  });
+});
