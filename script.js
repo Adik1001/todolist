@@ -1,10 +1,12 @@
+console.log("Baizho gay1");
+
 document.addEventListener("DOMContentLoaded", function () {
   const input = document.getElementById("taskInput");
   const taskList = document.getElementById("taskList");
   const addBtn = document.getElementById("addBtn");
 
   addBtn.addEventListener("click", function () {
-    console.log("Baizho gay");
+    console.log("Baizho gay!");
     const taskText = input.value.trim();
     if (!taskText) return;
 
