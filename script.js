@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const addBtn = document.getElementById("addBtn");
 
   addBtn.addEventListener("click", function () {
+    console.log("Baizho gay");
     const taskText = input.value.trim();
     if (!taskText) return;
 
