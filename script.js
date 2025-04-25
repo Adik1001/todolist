@@ -1,32 +1,26 @@
-console.log("Baizho gay1");
-
-document.addEventListener("DOMContentLoaded", function () {
-  const input = document.getElementById("taskInput");
-  const taskList = document.getElementById("taskList");
-  const addBtn = document.getElementById("addBtn");
-
-  addBtn.addEventListener("click", function () {
-    console.log("Baizho gay!");
-    const taskText = input.value.trim();
-    if (!taskText) return;
-
-    const li = document.createElement("li");
-    li.textContent = taskText;
-    li.classList.add("task");
-
-    li.addEventListener("click", function () {
-      li.classList.toggle("completed");
+document.getElementById('add-task').addEventListener('click', function() {
+    const taskInput = document.getElementById('new-task');
+    const taskText = taskInput.value.trim();
+    if (taskText === '') return;
+    
+    const taskList = document.getElementById('task-list');
+    const taskItem = document.createElement('li');
+    taskItem.classList.add('task-item');
+    
+    taskItem.innerHTML = `
+      <span class="task-text">${taskText}</span>
+      <button class="delete-task">Delete</button>
+    `;
+    
+    taskItem.querySelector('.delete-task').addEventListener('click', function() {
+      taskList.removeChild(taskItem);
     });
-
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "❌";
-    delBtn.addEventListener("click", function (e) {
-      e.stopPropagation();
-      li.remove();
+    
+    taskItem.querySelector('.task-text').addEventListener('click', function() {
+      taskItem.classList.toggle('completed');
     });
-
-    li.appendChild(delBtn);
-    taskList.appendChild(li);
-    input.value = "";
+    
+    taskList.appendChild(taskItem);
+    taskInput.value = '';
   });
-});
+  
