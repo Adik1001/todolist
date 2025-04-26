@@ -1,3 +1,5 @@
+let tasks = [];
+
 document.getElementById('add-task').addEventListener('click', function() {
   const taskInput = document.getElementById('new-task');
   const taskTimeInput = document.getElementById('task-time');
@@ -6,66 +8,67 @@ document.getElementById('add-task').addEventListener('click', function() {
 
   if (taskText === '' || taskTime === '') return;
 
-  const taskList = document.getElementById('task-list');
+  const task = {
+    text: taskText,
+    deadline: new Date(taskTime),
+    completed: false
+  };
 
-  const taskItem = document.createElement('li');
-  taskItem.classList.add('task-item');
-
-  const taskDeadline = new Date(taskTime);
-  const timeRemaining = taskDeadline - new Date();
-
-  taskItem.innerHTML = `
-    <span class="task-text">${taskText}</span>
-    <span class="task-time">${new Date(taskDeadline).toLocaleString()}</span>
-    <button class="finish-task">Finish</button>
-    <button class="delete-task">Delete</button>
-  `;
-
-  const finishButton = taskItem.querySelector('.finish-task');
-  finishButton.addEventListener('click', function() {
-    taskItem.remove();
-    document.body.classList.add('green-bg');
-    setTimeout(() => document.body.classList.remove('green-bg'), 2000);
-  });
-
-  const deleteButton = taskItem.querySelector('.delete-task');
-  deleteButton.addEventListener('click', function() {
-    taskItem.remove();
-    document.body.classList.add('red-bg');
-    setTimeout(() => document.body.classList.remove('red-bg'), 2000);
-  });
-
-  taskList.appendChild(taskItem);
+  tasks.push(task);
+  renderTasks();
 
   taskInput.value = '';
   taskTimeInput.value = '';
-
-  sortTasksByDeadline();
-
-  setInterval(function() {
-    const tasks = document.querySelectorAll('.task-item');
-    tasks.forEach(task => {
-      const taskDeadline = new Date(task.querySelector('.task-time').textContent);
-      const currentTime = new Date();
-
-      if (taskDeadline < currentTime) {
-        task.remove();
-        document.body.classList.add('red-bg');
-        setTimeout(() => document.body.classList.remove('red-bg'), 2000);
-      }
-    });
-  }, 1000);
 });
 
-function sortTasksByDeadline() {
+function renderTasks() {
   const taskList = document.getElementById('task-list');
-  const tasks = Array.from(taskList.children);
+  taskList.innerHTML = '';
 
-  tasks.sort((a, b) => {
-    const timeA = new Date(a.querySelector('.task-time').textContent).getTime();
-    const timeB = new Date(b.querySelector('.task-time').textContent).getTime();
-    return timeA - timeB;
+  tasks.sort((a, b) => a.deadline - b.deadline);
+
+  tasks.forEach((task, index) => {
+    const taskItem = document.createElement('li');
+    taskItem.classList.add('task-item');
+
+    taskItem.innerHTML = `
+      <span class="task-text">${task.text}</span>
+      <span class="task-time">${task.deadline.toLocaleString()}</span>
+      <button class="finish-task">Finish</button>
+      <button class="delete-task">Delete</button>
+    `;
+
+    const finishButton = taskItem.querySelector('.finish-task');
+    finishButton.addEventListener('click', function() {
+      tasks.splice(index, 1);
+      document.body.classList.add('green-bg');
+      setTimeout(() => document.body.classList.remove('green-bg'), 2000);
+      renderTasks();
+    });
+
+    const deleteButton = taskItem.querySelector('.delete-task');
+    deleteButton.addEventListener('click', function() {
+      tasks.splice(index, 1);
+      document.body.classList.add('red-bg');
+      setTimeout(() => document.body.classList.remove('red-bg'), 2000);
+      renderTasks();
+    });
+
+    taskList.appendChild(taskItem);
   });
-
-  tasks.forEach(task => taskList.appendChild(task));
 }
+
+setInterval(function() {
+  const now = new Date();
+  let removed = false;
+  tasks = tasks.filter(task => {
+    if (task.deadline > now) return true;
+    removed = true;
+    return false;
+  });
+  if (removed) {
+    document.body.classList.add('red-bg');
+    setTimeout(() => document.body.classList.remove('red-bg'), 2000);
+    renderTasks();
+  }
+}, 1000);
